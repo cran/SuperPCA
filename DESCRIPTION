@@ -1,0 +1,18 @@
+Package: SuperPCA
+Type: Package
+Title: Supervised Principal Component Analysis
+Version: 0.1.0
+Author: Gen Li <gl2521@cumc.columbia.edu>, Haocheng Ding <haochengding@ufl.edu>, Jiayi Ji <jj2876@caa.columbia.edu>
+Maintainer: Jiayi Ji <jj2876@caa.columbia.edu>
+Description: Dimension reduction of complex data with supervision from auxiliary information. The package contains a series of methods for different data types (e.g., multi-view or multi-way data) including the supervised singular value decomposition (SupSVD), supervised sparse and functional principal component (SupSFPC), supervised integrated factor analysis (SIFA) and supervised PARAFAC/CANDECOMP factorization (SupCP). When auxiliary data are available and potentially affect the intrinsic structure of the data of interest, the methods will accurately recover the underlying low-rank structure by taking into account the supervision from the auxiliary data. For more details, see the paper by Gen Li, <DOI:10.1111/biom.12698>.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: RSpectra, psych, fBasics, R.matlab, glmnet, MASS, matrixStats,
+        timeSeries, stats, matlabr, spls, pracma, matlab
+Depends: Matrix
+RoxygenNote: 6.0.1
+NeedsCompilation: no
+Packaged: 2018-10-18 13:23:22 UTC; JiayiJi
+Repository: CRAN
+Date/Publication: 2018-10-26 22:40:14 UTC

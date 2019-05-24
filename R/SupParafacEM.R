@@ -42,6 +42,7 @@
 #' R <-3
 #' SupParafacEM(Y,X,R)
 #'
+
 SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,convg_thres=10^-3,Sf_diag=1){
 
   n1 <- nrow(Y)
@@ -83,14 +84,15 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
   E <- X-TensProd(lapply(rapply(list(U,V), enquote, how="unlist"), eval))
   se2 <- stats::var(c(E))
   B <- tcrossprod(solve(crossprod(Y,Y)),Y)%*%U
+
   if(Sf_diag==1){
-    Sf <- diag(diag((1/n)*crossprod((U-Y%*%B),(U-Y%*%B)))) # R*R, diagonal
+    Sf <- diag(diag((1/n)*crossprod((U-Y%*%B),(U-Y%*%B))),nrow=length(diag((1/n)*crossprod((U-Y%*%B),(U-Y%*%B))))) # R*R, diagonal
   }else{
     Sf <- (1/n)*crossprod(U-Y%*%B,U-Y%*%B)
   }
 
   ##Compute determinant exactly, using Sylvester's  determinant theorem
-  ##https://en.wikipedia.org/wiki/Determinant#Properties_of_the_determinant
+  ##https://urldefense.proofpoint.com/v2/url?u=https-3A__en.wikipedia.org_wiki_Determinant-23Properties-5Fof-5Fthe-5Fdeterminant&d=DwIGAg&c=shNJtf5dKgNcPZ6Yh64b-A&r=8vQikVD2OeskHkMuyMa2Ex3cvV8ASEAcXVo85pK-_OA&m=YY7b_O9WWEM2p7MIe0tSbr2C961SxIiMtQs6kzJcDlM&s=ymDacObT-QcJsY_S5b_PpwuxMpeBrR0PUai62hsccp4&e=
   #MatForDet = sqrt(Sf)*Vmat'*Vmat*sqrt(Sf)./se2+eye(R); %R X R
 
   MatForDet <- (Sf^.5)%*%crossprod(Vmat,Vmat)%*%(Sf^.5)/se2+diag(R) # R*R
@@ -100,7 +102,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
   ResidMat <- t(Xmat)-Y%*%tcrossprod(B,Vmat) #n*p
 
   if(Sf_diag==1){
-    Sfinv <- diag(1/diag(Sf))
+    Sfinv <- diag(1/diag(Sf),nrow=length(1/diag(Sf)))
   }else{
     Sfinv <- solve(Sf)
   }
@@ -126,7 +128,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
     #E step
 
     if(Sf_diag==1){
-      Sfinv <- diag(1/diag(Sf))
+      Sfinv <- diag(1/diag(Sf),nrow=length(1/diag(Sf)))
     }else{
       Sfinv <- solve(Sf)
     }
@@ -144,7 +146,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
 
     if(niter<AnnealIters){
       anneal <- (AnnealIters-niter)/AnnealIters
-      U <- matrix(MASS::mvrnorm(prod(dim(cond_Mean)),colMeans(cond_Mean),anneal*diag(matrixStats::colVars(U))),dim(cond_Mean)[1],dim(cond_Mean)[2])
+      U <- matrix(MASS::mvrnorm(prod(dim(cond_Mean)),colMeans(cond_Mean),anneal*diag(matrixStats::colVars(U),nrow=length(matrixStats::colVars(U)))),dim(cond_Mean)[1],dim(cond_Mean)[2])
     }
     cond_Mean <- U
     cond_quad <- n*cond_Var+crossprod(U,U) #E(U'U|X),r*r
@@ -182,7 +184,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
 
     #estimate diagnoal entries of covariance
     if(Sf_diag==1){
-      Sf <- diag(diag((cond_quad+crossprod(Y%*%B,Y%*%B)-crossprod(Y%*%B,cond_Mean)-crossprod(cond_Mean,(Y%*%B)))/n))
+      Sf <- diag(diag((cond_quad+crossprod(Y%*%B,Y%*%B)-crossprod(Y%*%B,cond_Mean)-crossprod(cond_Mean,(Y%*%B)))/n),nrow=length(diag((cond_quad+crossprod(Y%*%B,Y%*%B)-crossprod(Y%*%B,cond_Mean)-crossprod(cond_Mean,(Y%*%B)))/n)))
     }else{# estimate full covariance
       Sf <- (cond_quad+crossprod(Y%*%B,Y%*%B)-crossprod(Y%*%B,cond_Mean)-crossprod(cond_Mean,Y%*%B))/n
     }
@@ -204,7 +206,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
 
     # Calc likelihood
     if(Sf_diag==1){
-      Sfinv <- diag(1/diag(Sf))
+      Sfinv <- diag(1/diag(Sf),nrow=length(1/diag(Sf)))
     }else{
       Sfinv <- solve(Sf)
     }

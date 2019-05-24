@@ -56,6 +56,9 @@
 #'X3c <- scale(X3,center=TRUE,scale=FALSE)
 #' SupPCA(Yc,X3c,r)
 SupPCA <- function(Y, X, r){
+  if(is.vector(Y)=="TRUE"){
+    Y <- as.matrix(Y,ncol=1)
+  }
   n <- nrow(X)
   p <- ncol(X)
   n1 <- nrow(Y)
@@ -247,9 +250,9 @@ SupPCA <- function(Y, X, r){
 
     ## re-order V, and correspondingly B and Sf, U (one simple remedy for the improper order of V)
     I <- order(timeSeries::colStdevs(X%*%V), decreasing = TRUE)
-    V <- V[,I]
-    B <- B[,I]
-    Sf <- Sf[I,I]
+    V <- V[,I,drop=FALSE]
+    B <- B[,I,drop=FALSE]
+    Sf <- Sf[I,I,drop=FALSE]
 
     ## correct sign of V for identifiability
     ## also correct B and Sf

@@ -4,9 +4,9 @@
 \alias{SupSFPCA}
 \title{Supervised Sparse and Functional Principal Component Analysis}
 \usage{
-SupSFPCA(Y, X, r, ind_lam = 1, ind_alp = 1, ind_gam = 1, ind_Omg = 1,
-  Omega = 0, max_niter = 10^3, convg_thres = 10^-6, vmax_niter = 10^2,
-  vconvg_thres = 10^-4)
+SupSFPCA(Y, X, r, ind_lam = 1, ind_alp = 1, ind_gam = 1,
+  ind_Omg = 1, Omega = 0, max_niter = 10^3, convg_thres = 10^-6,
+  vmax_niter = 10^2, vconvg_thres = 10^-4)
 }
 \arguments{
 \item{Y}{n*q (column centered) auxiliary data matrix, rows are samples and columns are variables}

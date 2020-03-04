@@ -4,8 +4,8 @@
 \alias{SIFA}
 \title{Supervised Integrated Factor Analysis}
 \usage{
-SIFA(X, Y, r0, r, relation = "linear", sparsity = 0, max_niter = 1000,
-  convg_thres = 0.01, type = "Anp")
+SIFA(X, Y, r0, r, relation = "linear", sparsity = 0,
+  max_niter = 1000, convg_thres = 0.01, type = "Anp")
 }
 \arguments{
 \item{X}{n*q matrix, centered covariate data}

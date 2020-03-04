@@ -78,7 +78,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
   if(type =="Anp"){
     S <- RSpectra::svds(grandY,r0)
     U_joint_ini <- S$u
-    D_joint_ini <- diag(S$d)
+    D_joint_ini <- diag(S$d,nrow=length(S$d))
     V_joint <- S$v
     U_joint <- U_joint_ini%*%D_joint_ini
     V_ind <- list()
@@ -90,7 +90,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
     Ycurrent <- Y[[1]]-tcrossprod(U_joint,Vcurrent)
     Sk <- RSpectra::svds(Ycurrent,r[1])
     U_k_ini <- Sk$u
-    D_k_ini <- diag(Sk$d)
+    D_k_ini <- diag(Sk$d,nrow=length(Sk$d))
     V_k <- Sk$v
     U_k <- U_k_ini%*%D_k_ini
     V_ind[[1]] <- V_k
@@ -104,7 +104,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       Ycurrent <- Y[[k]]-tcrossprod(U_joint,Vcurrent)
       Sk <- RSpectra::svds(Ycurrent,r[k])
       U_k_ini <- Sk$u
-      D_k_ini <- diag(Sk$d)
+      D_k_ini <- diag(Sk$d,nrow=length(Sk$d))
       V_k <- Sk$v
       U_k <- U_k_ini%*%D_k_ini
       V_ind[[k]] <- V_k
@@ -141,7 +141,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       temp <- tcrossprod(grandU,grandV)
       se2[k] <- norm(Y[[k]]-temp[,loc3:loc4],"f")^2/(n*p[k])
     }
-    Sf0 <- diag(matrixStats::colSds(U_joint-fX[,1:r0])^2)
+    Sf0 <- diag(matrixStats::colSds(U_joint-fX[,1:r0])^2,nrow=length(matrixStats::colSds(U_joint-fX[,1:r0])^2))# a matrix
 
     # disp('Initial est done!')
     loglik <- loglikelihood1(Y,fX,V_joint,V_ind,se2,Sf0,Sf)
@@ -272,7 +272,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       temp4 <- crossprod(f0X,EUcurrent)
       temp5 <- crossprod(EUcurrent,f0X)
       #Sf0 <- (temp1+temp2+temp3-temp4-temp5)/n #questionable!!!
-      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n) #exactly follow the draft
+      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n,nrow = length(diag(temp1+temp2+temp3-temp4-temp5)/n)) #exactly follow the draft
 
       loc1 <- r0+1
       loc2 <- loc1+r[1]-1
@@ -302,7 +302,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
 
       # Post Standardization for V0 (and Sf0 and B0)
       S1 <- RSpectra::svds(V_joint%*%tcrossprod(Sf0,V_joint),r0)
-      Sf0 <- diag(S1$d)
+      Sf0 <- diag(S1$d,nrow=length(S1$d))
       V_joint_new <- S1$u
       fX[,(1:r0)] <- fX[,(1:r0)]%*%crossprod(V_joint,V_joint_new)
       V_joint <- V_joint_new
@@ -393,7 +393,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
   else if(type == "Bnp"){
     S1 <- RSpectra::svds(grandY,r0) #note: segments of V_joint_ini correspond to each data set may not be orthogonal as desired.
     U_joint <- S1$u
-    D_joint <- diag(S1$d)
+    D_joint <- diag(S1$d,nrow=length(S1$d))
     V_joint_ini <- S1$v
     U_joint <- U_joint%*%D_joint
     V_ind <- list()
@@ -404,7 +404,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
     Ycurrent <- Y[[1]]-tcrossprod(U_joint,V_joint_ini[(loc3:loc4),])
     S2 <- RSpectra::svds(Ycurrent,r[1])
     U_k_ini <- S2$u
-    D_k_ini <- diag(S2$d)
+    D_k_ini <- diag(S2$d,nrow=length(S2$d))
     V_k_ini <- S2$v
     U_k <- U_k_ini%*%D_k_ini
     V_ind[[1]] <- V_k_ini
@@ -416,7 +416,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       Ycurrent <- Y[[k]]-tcrossprod(U_joint,V_joint_ini[(loc3:loc4),])
       S2 <- RSpectra::svds(Ycurrent,r[k])
       U_k_ini <- S2$u
-      D_k_ini <- diag(S2$d)
+      D_k_ini <- diag(S2$d,nrow=length(S2$d))
       V_k_ini <- S2$v
       U_k <- U_k_ini%*%D_k_ini
       V_ind[[k]] <- V_k_ini
@@ -429,12 +429,12 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
 
     loc3 <- 1
     loc4 <- sum(p[1:1])
-    V_joint_k <- GramSchmidt(V_joint_ini[loc3:loc4,],V_ind[[1]])$Q1
+    V_joint_k <- GramSchmidt(as.matrix(V_joint_ini[loc3:loc4,]),V_ind[[1]])$Q1
     V_joint[loc3:loc4,] <- V_joint_k*(1/sqrt(K))
     for(k in 2:K){
       loc3 <- sum(p[1:(k-1)])+1
       loc4 <- sum(p[1:k])
-      V_joint_k <- GramSchmidt(V_joint_ini[loc3:loc4,],V_ind[[k]])$Q1
+      V_joint_k <- GramSchmidt(as.matrix(V_joint_ini[loc3:loc4,]),V_ind[[k]])$Q1
       V_joint[loc3:loc4,] <- V_joint_k*(1/sqrt(K))
     }
     grandV <- cbind(V_joint,grandV)
@@ -462,7 +462,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       temp <- tcrossprod(grandU, grandV)
       se2[k] <- (norm(Y[[k]]-temp[,loc3:loc4],type = "F")%*%norm(Y[[k]]-temp[,loc3:loc4],type = "F"))%*%solve(n*p[k])
     }
-    Sf0 <- diag(apply((U_joint-fX[,1:r0])^2,2,stats::sd))
+    Sf0 <- diag(apply((U_joint-fX[,1:r0])^2,2,stats::sd),nrow=length(apply((U_joint-fX[,1:r0])^2,2,stats::sd)))
 
     #disp('Initial est done!')
     loglik <- loglikelihood1(Y,fX,V_joint,V_ind,se2,Sf0,Sf)
@@ -564,12 +564,12 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       f0X <- fX[,1:r0]
       EUcurrent <- EU[,1:r0]
       covUcurrent <- covU[1:r0,drop = "FLASE"]
-      temp1 <- n*diag(covUcurrent)
+      temp1 <- n*diag(covUcurrent,nrow=length(covUcurrent))
       temp2 <- crossprod(EUcurrent,EUcurrent)
       temp3 <- crossprod(f0X,EUcurrent)
       temp4 <- crossprod(f0X,EUcurrent)
       temp5 <- crossprod(EUcurrent,f0X)
-      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n)
+      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n,nrow=length(diag(temp1+temp2+temp3-temp4-temp5)/n))
 
       loc1 <- r0+1
       loc2 <- loc1+r[1]-1
@@ -672,7 +672,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
   else if(type=="A"){
     S <- RSpectra::svds(grandY,r0)
     U_joint_ini <- S$u
-    D_joint_ini <- diag(S$d)
+    D_joint_ini <- diag(S$d,nrow=length(S$d))
     V_joint <- S$v
     # note: segments of V_joint_ini corresponding to each data set may not be orthogonal as desired
     U_joint <- U_joint_ini%*%D_joint_ini
@@ -687,7 +687,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
     }else{# if sparsity = 0, no B-sparsity
       B0 <- solve(crossprod(X,X), t(X))%*%U_joint
     }
-    Sf0 <- diag(apply((U_joint-X%*%B0)^2,2,stats::sd))
+    Sf0 <- diag(apply((U_joint-X%*%B0)^2,2,stats::sd),nrow=length(apply((U_joint-X%*%B0)^2,2,stats::sd)))
     V_ind <- list()
     B <- list()
     for(k in 1:K){
@@ -701,7 +701,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
     Ycurrent <- Y[[1]]-tcrossprod(U_joint,Vcurrent)
     S2 <- RSpectra::svds(Ycurrent,r[1])
     U_k_ini <- S2$u
-    D_k_ini <- diag(S2$d)
+    D_k_ini <- diag(S2$d,nrow=length(S2$d))
     V_k <- S2$v
     U_k <- U_k_ini%*%D_k_ini
     V_ind[[1]] <- V_k
@@ -726,7 +726,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       Ycurrent <- Y[[k]]-tcrossprod(U_joint,Vcurrent)
       S2 <- RSpectra::svds(Ycurrent,r[k])
       U_k_ini <- S2$u
-      D_k_ini <- diag(S2$d)
+      D_k_ini <- diag(S2$d,nrow=length(S2$d))
       V_k <- S2$v
       U_k <- U_k_ini%*%D_k_ini
       V_ind[[k]] <- V_k
@@ -792,6 +792,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       # grandV = cbind(V_joint, grandV_temp) #sum(p)*(r0+sum(r))
       grandB <- cbind(B0,grandB_temp) # q*(r0+sum(r))
       Delta1 <- pracma::arrayfun("*", t(grandV), grandse2_inv)%*%grandV #[r0+sum(r)]*[r0+sum(r)]
+
       Delta2_inv <- solve(diag(c(grandSf0_inv,grandSf_inv))+Delta1)
       temp <- grandV%*%tcrossprod(Delta2_inv,grandV)
       SigmaY_inv <- diag(grandse2_inv) - pracma::arrayfun("*", pracma::arrayfun("*",temp, grandse2_inv), t(grandse2_inv)) #sum(p)*sum(p), not diagonal because of common structure, diff from SupSVD
@@ -944,7 +945,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       #Post Standardization for V0 (and Sf0 and B0)
       S4 <- RSpectra::svds(V_joint%*%tcrossprod(Sf0, V_joint),r0)
       V_joint_new <- S4$u
-      Sf0 <- diag(S4$d)
+      Sf0 <- diag(S4$d,nrow=length(S4$d))
       V_joint_new <- pracma::arrayfun("*", V_joint_new, sign(V_joint_new[1,])) # make sure no sign alternation
       B0 <- tcrossprod(B0,V_joint)%*%V_joint_new #will sacrifice any sparsity in B0
       V_joint <- V_joint_new #reorder columns of B, V, and rows/columns of Sf
@@ -1019,7 +1020,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
   else if(type=="B"){
     S <- RSpectra::svds(grandY,r0)
     U_joint_ini <- S$u
-    D_joint_ini <- diag(S$d)
+    D_joint_ini <- diag(S$d,nrow=length(S$d))
     V_joint_ini <- S$v
     # note: segments of V_joint_ini corresponding to each data set may not be orthogonal as desired
     U_joint_ini <- U_joint_ini%*%D_joint_ini
@@ -1038,7 +1039,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       # if sparsity = 0, no B-sparsity
       B0 <- solve(crossprod(X,X), t(X))%*%U_joint_ini
     }
-    Sf0 <- diag(apply((U_joint_ini-X%*%B0)^2,2,stats::sd))
+    Sf0 <- diag(apply((U_joint_ini-X%*%B0)^2,2,stats::sd),nrow=length(apply((U_joint_ini-X%*%B0)^2,2,stats::sd)))
     V_ind <- list()
     B <- list()
     for(k in 1:K){
@@ -1052,7 +1053,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
     Ycurrent <- Y[[1]]-tcrossprod(U_joint_ini,V_joint_ini[loc3:loc4,])
     S2 <- RSpectra::svds(Ycurrent,r[1])
     U_k_ini <- S2$u
-    D_k_ini <- diag(S2$d)
+    D_k_ini <- diag(S2$d,nrow=length(S2$d))
     V_k_ini <- S2$v
     U_k_ini <- U_k_ini%*%D_k_ini
     V_ind[[1]] <- V_k_ini
@@ -1075,7 +1076,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       Ycurrent <- Y[[k]]-tcrossprod(U_joint_ini,V_joint_ini[loc3:loc4,])
       S2 <- RSpectra::svds(Ycurrent,r[k])
       U_k_ini <- S2$u
-      D_k_ini <- diag(S2$d)
+      D_k_ini <- diag(S2$d,nrow=length(S2$d))
       V_k_ini <- S2$v
       U_k_ini <- U_k_ini%*%D_k_ini
       V_ind[[k]] <- V_k_ini
@@ -1099,12 +1100,12 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
 
     loc3 <- 1
     loc4 <- sum(p[1:1])
-    V_joint_k <- GramSchmidt(V_joint_ini[loc3:loc4,],V_ind[[1]])$Q1
+    V_joint_k <- GramSchmidt(as.matrix(V_joint_ini[loc3:loc4,]),V_ind[[1]])$Q1
     V_joint[loc3:loc4,] <- V_joint_k*(1/sqrt(K))
     for (k in 2:K){
       loc3 <- sum(p[1:(k-1)])+1
       loc4 <- sum(p[1:k])
-      V_joint_k <- GramSchmidt(V_joint_ini[loc3:loc4,],V_ind[[k]])$Q1
+      V_joint_k <- GramSchmidt(as.matrix(V_joint_ini[loc3:loc4,]),V_ind[[k]])$Q1
       V_joint[loc3:loc4,] <- V_joint_k*(1/sqrt(K))
     }
     grandV <- NULL
@@ -1185,7 +1186,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       tempL <- S3$u
       tempR <- S3$v
       Vcurrent_star <- tcrossprod(tempL,tempR) # should have orthonormal columns
-      V_joint[loc3:loc4,] <- Vcurrent_star[,1:r0]*(1/sqrt(K))
+      V_joint[loc3:loc4,] <- Vcurrent_star[,1:r0,drop=F]*(1/sqrt(K))
       V_ind[[1]] <- Vcurrent_star[,(r0+1):(r0+r[1])]
       Vcurrent <- cbind(V_joint[loc3:loc4,],V_ind[[1]])
       # clear EUcurrent_star Vcurrent_star
@@ -1212,7 +1213,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
         tempL <- S3$u
         tempR <- S3$v
         Vcurrent_star <- tcrossprod(tempL,tempR) # should have orthonormal columns
-        V_joint[loc3:loc4,] <- Vcurrent_star[,1:r0]*(1/sqrt(K))
+        V_joint[loc3:loc4,] <- Vcurrent_star[,1:r0,drop=F]*(1/sqrt(K))
         V_ind[[k]] <- Vcurrent_star[,(r0+1):(r0+r[k])]
         Vcurrent <- cbind(V_joint[loc3:loc4,],V_ind[[k]])
         # clear EUcurrent_star Vcurrent_star
@@ -1242,12 +1243,12 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
         B0 <- solve(crossprod(X,X),t(X))%*%EUcurrent
       }
       covUcurrent <- covU[1:r0]
-      temp1 <- n*diag(covUcurrent)
+      temp1 <- n*diag(covUcurrent,nrow=length(covUcurrent))
       temp2 <- crossprod(EUcurrent,EUcurrent)
       temp3 <- crossprod(B0,crossprod(X,X))%*%B0
       temp4 <- t(B0)%*%crossprod(X,EUcurrent)
       temp5 <- crossprod(EUcurrent,X)%*%B0
-      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n)
+      Sf0 <- diag(diag(temp1+temp2+temp3-temp4-temp5)/n,nrow=length(diag(temp1+temp2+temp3-temp4-temp5)/n))
 
       loc1 <- r0+1
       loc2 <- loc1+r[1]-1
@@ -1300,7 +1301,7 @@ SIFA<- function(X,Y,r0,r,relation = 'linear', sparsity = 0,max_niter=1000, convg
       I <- tempA$ix
       Sf0 <- diag(temp)
       B0 <- B0[,I]
-      V_joint <- V_joint[,I]
+      V_joint <- V_joint[,I,drop=F]
       for(k in 1:K){
         tempB <- sort(diag(Sf[[k]]), decreasing = T, index.return = T)
         temp <- tempB$x

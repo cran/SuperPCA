@@ -28,7 +28,7 @@ loglikelihood1<-function(Y,fX,V_joint,V_ind,se2,Sf0,Sf){
     grandSf <- cbind(grandSf,t(diag(Sf[[k]])))
     grandV_temp <-pracma::blkdiag(grandV_temp,V_ind[[k]])
   }
-  
+
   grandse2_inv <- 1/grandse2 #1*sum(p)
   grandSf_inv <- 1/grandSf #1*sum(r)
   grandSf0_inv <- 1/grandSf0 #1*r0
@@ -39,14 +39,14 @@ loglikelihood1<-function(Y,fX,V_joint,V_ind,se2,Sf0,Sf){
   SigmaY_inv <- diag(grandse2_inv)-pracma::arrayfun("*", pracma::arrayfun("*", temp, grandse2_inv), t(grandse2_inv))
   temp <- pracma::arrayfun("*", grandV, sqrt(cbind(grandSf0,grandSf)))
   SigmaY <- diag(as.vector(grandse2))+tcrossprod(temp, temp)
-  
+
   #loglikelihood terms
   term1 <- -n*sum(log(diag(chol(SigmaY)))) #log det
   temp <- grandY - tcrossprod(fX,grandV)
   term2 <- -1/2*sum(diag((SigmaY_inv%*%crossprod(temp, temp))))
-  
+
   #final output
   out <- term1+term2
-  
+
   return(out)
 }

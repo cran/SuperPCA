@@ -46,7 +46,7 @@ Y <- matrix(rnorm(400,0,1),nrow=100)
 B <- c(-1,1,-sqrt(3/2),-1)
 B <- cbind(B,c(1,1,-1,sqrt(3/2)))
 V <- matrix(rnorm(68*2),68,2)
-Fmatrix <- matrix(MASS::mvrnorm(n=2*100,rep(0,2),matrix(c(9,0,0,4),2,2)),100,2)
+Fmatrix <- matrix(MASS::mvrnorm(n=1*100,rep(0,2),matrix(c(9,0,0,4),2,2)),100,2)
 E <- matrix(rnorm(100*68,0,3),100,68)
 Yc <- scale(Y,center=TRUE,scale=FALSE)
 

@@ -4,8 +4,16 @@
 \alias{SupParafacEM}
 \title{Using EM algorithm to fit the SupCP model}
 \usage{
-SupParafacEM(Y, X, R, AnnealIters = 100, ParafacStart = 0,
-  max_niter = 1000, convg_thres = 10^-3, Sf_diag = 1)
+SupParafacEM(
+  Y,
+  X,
+  R,
+  AnnealIters = 100,
+  ParafacStart = 0,
+  max_niter = 1000,
+  convg_thres = 10^-3,
+  Sf_diag = 1
+)
 }
 \arguments{
 \item{Y}{n*q full column rank reponse matrix(necessarily n>=q)}
@@ -40,7 +48,7 @@ Using EM algorithm to fit the SupCP model
 \examples{
 sigmaF <- diag(c(100,64,36,16,4))
 # F matrix n*r
-Fmatrix1 <- matrix(MASS::mvrnorm(n=500,rep(0,5),sigmaF),100,5)
+Fmatrix1 <- matrix(MASS::mvrnorm(n=100,rep(0,5),sigmaF),100,5)
 U<-Fmatrix1
 V1 <- matrix(stats::rnorm(10*5),10,5)
 V2 <- matrix(stats::rnorm(10*5),10,5)

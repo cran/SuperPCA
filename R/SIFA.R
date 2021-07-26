@@ -33,7 +33,7 @@
 #' r0 <- 2
 #' r <- c(3,3)
 #' V <- matrix(stats::rnorm(10*2),10,2)
-#' Fmatrix <- matrix(MASS::mvrnorm(n=2*500,rep(0,2),matrix(c(9,0,0,4),2,2)),500,2)
+#' Fmatrix <- matrix(MASS::mvrnorm(n=1*500,rep(0,2),matrix(c(9,0,0,4),2,2)),500,2)
 #' E <- matrix(stats::rnorm(500*10,0,3),500,10)
 #' X <- tcrossprod(Fmatrix,V)+E
 #' X <-scale(X,center=TRUE,scale=FALSE)

@@ -4,8 +4,17 @@
 \alias{SIFA}
 \title{Supervised Integrated Factor Analysis}
 \usage{
-SIFA(X, Y, r0, r, relation = "linear", sparsity = 0,
-  max_niter = 1000, convg_thres = 0.01, type = "Anp")
+SIFA(
+  X,
+  Y,
+  r0,
+  r,
+  relation = "linear",
+  sparsity = 0,
+  max_niter = 1000,
+  convg_thres = 0.01,
+  type = "Anp"
+)
 }
 \arguments{
 \item{X}{n*q matrix, centered covariate data}
@@ -52,7 +61,7 @@ Supervised Integrated Factor Analysis
 r0 <- 2
 r <- c(3,3)
 V <- matrix(stats::rnorm(10*2),10,2)
-Fmatrix <- matrix(MASS::mvrnorm(n=2*500,rep(0,2),matrix(c(9,0,0,4),2,2)),500,2)
+Fmatrix <- matrix(MASS::mvrnorm(n=1*500,rep(0,2),matrix(c(9,0,0,4),2,2)),500,2)
 E <- matrix(stats::rnorm(500*10,0,3),500,10)
 X <- tcrossprod(Fmatrix,V)+E
 X <-scale(X,center=TRUE,scale=FALSE)

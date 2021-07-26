@@ -32,7 +32,7 @@
 #' @examples
 #' sigmaF <- diag(c(100,64,36,16,4))
 #' # F matrix n*r
-#' Fmatrix1 <- matrix(MASS::mvrnorm(n=500,rep(0,5),sigmaF),100,5)
+#' Fmatrix1 <- matrix(MASS::mvrnorm(n=100,rep(0,5),sigmaF),100,5)
 #' U<-Fmatrix1
 #' V1 <- matrix(stats::rnorm(10*5),10,5)
 #' V2 <- matrix(stats::rnorm(10*5),10,5)
@@ -146,7 +146,7 @@ SupParafacEM <- function(Y,X,R,AnnealIters=100,ParafacStart=0,max_niter=1000,con
 
     if(niter<AnnealIters){
       anneal <- (AnnealIters-niter)/AnnealIters
-      U <- matrix(MASS::mvrnorm(prod(dim(cond_Mean)),colMeans(cond_Mean),anneal*diag(matrixStats::colVars(U),nrow=length(matrixStats::colVars(U)))),dim(cond_Mean)[1],dim(cond_Mean)[2])
+      U <- matrix(MASS::mvrnorm(dim(cond_Mean)[1],colMeans(cond_Mean),anneal*diag(matrixStats::colVars(U),nrow=length(matrixStats::colVars(U)))),dim(cond_Mean)[1],dim(cond_Mean)[2])
     }
     cond_Mean <- U
     cond_quad <- n*cond_Var+crossprod(U,U) #E(U'U|X),r*r
